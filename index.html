@@ -27,6 +27,13 @@
     font-size: 14px; background: #fff; font-family: inherit;
   }
 
+  .toggle-row {
+    display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #6B6559;
+    background: #fff; border: 1px solid #E6DFD2; border-radius: 8px; padding: 10px 14px;
+    margin-bottom: 14px; cursor: pointer; width: fit-content;
+  }
+  .toggle-row input { width: 16px; height: 16px; cursor: pointer; }
+
   .domain { background: #fff; border: 1px solid #E6DFD2; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
   .domain h2 { font-size: 14px; font-weight: 700; color: #7A5C3E; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #EFE8DB; }
 
@@ -90,6 +97,11 @@
     <div><label>상담 날짜</label><input type="date" id="date"></div>
   </div>
 
+  <label class="toggle-row">
+    <input type="checkbox" id="menstrual-toggle">
+    생리 전 또는 생리 중이신가요?
+  </label>
+
   <div id="form-area"></div>
 
   <button class="calc-btn" id="calc-btn" type="button">결과 확인하기</button>
@@ -133,6 +145,12 @@ var DOMAINS = [
   ]},
   { key:'selfcare', label:'자기관리 자원', protective:true, items:[
     [39,'신체 운동이나 스포츠 활동을 함'],[40,'눈을 감고 하는 이완이나 명상을 함']
+  ]},
+  { key:'menstrual', label:'생리·월경 관련 증상', conditional:true, items:[
+    [41,'생리 전 유방 압통·팽만감'],[42,'생리 전 감정 기복(예민함·눈물 많아짐)'],[43,'생리 전·중 두통 또는 편두통'],
+    [44,'하복부 통증(생리통)'],[45,'요통 또는 골반 불편감'],[46,'생리 전·중 부종(붓기)'],
+    [47,'생리 전 식욕 변화(과식·단 것 당김)'],[48,'생리 전·중 피부 트러블'],[49,'생리 주기 전반의 피로감 증가'],
+    [50,'생리 불순(주기가 불규칙함)']
   ]}
 ];
 
@@ -142,7 +160,8 @@ var NOTES = {
   tension: ['신체 긴장이 안정적이에요.', '가벼운 근골격 긴장 신호가 있어요.', '몸이 늘 긴장 모드인 유형이에요. 어깨·목 반사구 집중 케어를 권장해요.'],
   autonomic: ['자율신경 균형이 안정적이에요.', '자율신경 신호가 간간이 나타나요.', '자율신경이 예민해진 유형이에요. 이주·미주신경 반사구를 우선해보세요.'],
   digestion: ['소화·식욕이 안정적이에요.', '소화 컨디션에 가벼운 신호가 있어요.', '소화 기능에 부담이 큰 유형이에요. 위·비 반사구 케어를 병행해보세요.'],
-  emotion: ['정서적으로 안정된 상태예요.', '정서적으로 조금 지쳐있는 신호가 있어요.', '마음의 무게를 혼자 견뎌온 유형이에요. 정서 이완 케어와 함께, 필요하다면 전문 상담도 함께 권해보세요.']
+  emotion: ['정서적으로 안정된 상태예요.', '정서적으로 조금 지쳐있는 신호가 있어요.', '마음의 무게를 혼자 견뎌온 유형이에요. 정서 이완 케어와 함께, 필요하다면 전문 상담도 함께 권해보세요.'],
+  menstrual: ['생리 전후 컨디션이 안정적이에요.', '생리 전후로 가벼운 신호가 나타나는 편이에요.', '생리 전후 증상이 크게 나타나는 유형이에요. 자궁·내분비 반사구 중심 케어를 권장해요.']
 };
 
 var TIER_LABELS = ['안정', '관찰 필요', '집중 케어'];
@@ -202,8 +221,21 @@ function buildForm() {
       section.appendChild(row);
     });
 
+    if (d.conditional) {
+      section.id = 'domain-' + d.key;
+      section.style.display = 'none';
+    }
+
     formArea.appendChild(section);
   });
+
+  var menstrualToggle = document.getElementById('menstrual-toggle');
+  if (menstrualToggle) {
+    menstrualToggle.addEventListener('change', function() {
+      var section = document.getElementById('domain-menstrual');
+      if (section) section.style.display = menstrualToggle.checked ? 'block' : 'none';
+    });
+  }
 }
 
 function getTierIndex(avg) {
@@ -219,7 +251,11 @@ function calculate() {
   var grid = document.createElement('div');
   grid.className = 'result-grid';
 
+  var menstrualChecked = document.getElementById('menstrual-toggle').checked;
+
   DOMAINS.forEach(function(d) {
+    if (d.conditional && !menstrualChecked) return;
+
     var sum = 0;
     d.items.forEach(function(pair) { sum += answers[pair[0]]; });
     var avg = sum / d.items.length;
