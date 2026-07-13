@@ -307,6 +307,13 @@ function calculate() {
 
 buildForm();
 document.getElementById('calc-btn').addEventListener('click', calculate);
+</script><script>
+document.getElementById('calc-btn').addEventListener('click', function() {
+  gtag('event', 'check_complete', {
+    event_category: 'engagement',
+    event_label: '결과확인버튼클릭'
+  });
+});
 </script>
 </body>
 </html>
