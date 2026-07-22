@@ -62,31 +62,7 @@
   }
   .calc-btn:active { transform: scale(0.99); }
 
-  #result-area { margin-top: 20px; }
-  .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
-  .result-card { background: #fff; border-radius: 12px; padding: 14px 16px; border: 1px solid #E6DFD2; }
-  .result-card .rc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .result-card .rc-name { font-size: 13px; font-weight: 700; color: #2E2A26; }
-  .result-card .rc-tier { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
-  .result-card .rc-score { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-  .result-card .rc-score span { font-size: 12px; font-weight: 400; color: #8A8378; }
-  .result-card .rc-note { font-size: 12.5px; color: #6B6559; line-height: 1.55; }
-
-  .tier-stable { background: #E5EEE1; color: #4B6E3F; }
-  .tier-watch { background: #FBEED9; color: #A0722C; }
-  .tier-focus { background: #F6DFD5; color: #B04B2A; }
-
-  .print-btn {
-    display: block; width: 100%; text-align: center; padding: 10px; margin-top: 10px;
-    background: #fff; border: 1px solid #DDD5C7; border-radius: 8px; color: #6B6559;
-    font-size: 13px; cursor: pointer; font-family: inherit;
-  }
   footer { text-align: center; font-size: 11px; color: #B0A896; margin-top: 30px; }
-
-  @media print {
-    .calc-btn, .print-btn { display: none; }
-    body { background: #fff; }
-  }
 </style>
 </head>
 <body>
@@ -111,8 +87,6 @@
   <div id="form-area"></div>
 
   <button class="calc-btn" id="calc-btn" type="button">결과 확인하기</button>
-
-  <div id="result-area"></div>
 
   <footer>730스킨 이어테라피</footer>
 </div>
@@ -251,13 +225,8 @@ function getTierIndex(avg) {
 }
 
 function calculate() {
-  var resultArea = document.getElementById('result-area');
-  resultArea.innerHTML = '';
-
-  var grid = document.createElement('div');
-  grid.className = 'result-grid';
-
   var menstrualChecked = document.getElementById('menstrual-toggle').checked;
+  var resultsData = [];
 
   DOMAINS.forEach(function(d) {
     if (d.conditional && !menstrualChecked) return;
@@ -281,28 +250,17 @@ function calculate() {
       note = NOTES[d.key][tierIdx];
     }
 
-    var card = document.createElement('div');
-    card.className = 'result-card';
-    card.innerHTML =
-      '<div class="rc-top">' +
-        '<span class="rc-name">' + d.label + '</span>' +
-        '<span class="rc-tier ' + tierClass + '">' + tierLabel + '</span>' +
-      '</div>' +
-      '<div class="rc-score">' + avg + ' <span>/ ' + MAX_SCORE + '</span></div>' +
-      '<div class="rc-note">' + note + '</div>';
-    grid.appendChild(card);
+    resultsData.push({ label: d.label, avg: avg, max: MAX_SCORE, tierLabel: tierLabel, tierClass: tierClass, note: note });
   });
 
-  resultArea.appendChild(grid);
-
-  var printBtn = document.createElement('button');
-  printBtn.className = 'print-btn';
-  printBtn.type = 'button';
-  printBtn.textContent = '결과지 인쇄 / PDF 저장';
-  printBtn.addEventListener('click', function() { window.print(); });
-  resultArea.appendChild(printBtn);
-
-  resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  var payload = {
+    name: document.getElementById('name').value,
+    age: document.getElementById('age').value,
+    date: document.getElementById('date').value,
+    results: resultsData
+  };
+  sessionStorage.setItem('earCheckResult', JSON.stringify(payload));
+  location.href = 'result.html';
 }
 
 buildForm();
