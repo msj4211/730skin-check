@@ -38,11 +38,21 @@
     width: 100%; padding: 8px 10px; border: 1px solid #DDD5C7; border-radius: 6px;
     font-size: 14px; background: #fff; font-family: inherit;
   }
+  .gender-group { display: flex; gap: 6px; }
+  .gender-group .opt-btn { flex: 1; padding: 8px 10px; font-size: 13px; }
 
   .toggle-row {
     display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #6B6559;
-    background: #fff; border: 1px solid #E6DFD2; border-radius: 8px; padding: 10px 14px;
-    margin-bottom: 14px; cursor: pointer; width: fit-content;
+    background: #fff; border: 1px solid #E6DFD2; border-radius: 8px;
+    cursor: pointer; width: fit-content; overflow: hidden;
+    opacity: 0; max-height: 0; padding: 0 14px; margin-bottom: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.25s ease, max-height 0.25s ease, transform 0.25s ease,
+      padding 0.25s ease, margin-bottom 0.25s ease;
+  }
+  .toggle-row.is-visible {
+    opacity: 1; max-height: 60px; padding: 10px 14px; margin-bottom: 14px;
+    transform: translateY(0);
   }
   .toggle-row input { width: 16px; height: 16px; cursor: pointer; }
 
@@ -81,12 +91,19 @@
   </header>
 
   <div class="info-row">
+    <div>
+      <label>성별</label>
+      <div class="btn-group gender-group" id="gender-group">
+        <button type="button" class="opt-btn" data-gender="male">남성</button>
+        <button type="button" class="opt-btn" data-gender="female">여성</button>
+      </div>
+    </div>
     <div><label>이름</label><input type="text" id="name" placeholder="이름"></div>
     <div><label>나이</label><input type="text" id="age" placeholder="나이"></div>
     <div><label>상담 날짜</label><input type="date" id="date"></div>
   </div>
 
-  <label class="toggle-row">
+  <label class="toggle-row" id="menstrual-row">
     <input type="checkbox" id="menstrual-toggle">
     생리 전 또는 생리 중이신가요?
   </label>
@@ -225,6 +242,30 @@ function buildForm() {
   }
 }
 
+function setupGenderToggle() {
+  var genderGroup = document.getElementById('gender-group');
+  var menstrualRow = document.getElementById('menstrual-row');
+  var menstrualToggle = document.getElementById('menstrual-toggle');
+  if (!genderGroup || !menstrualRow || !menstrualToggle) return;
+
+  var genderBtns = genderGroup.querySelectorAll('.opt-btn');
+
+  genderBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      for (var i = 0; i < genderBtns.length; i++) genderBtns[i].classList.remove('active');
+      btn.classList.add('active');
+
+      var isFemale = btn.getAttribute('data-gender') === 'female';
+      menstrualRow.classList.toggle('is-visible', isFemale);
+
+      if (!isFemale && menstrualToggle.checked) {
+        menstrualToggle.checked = false;
+        menstrualToggle.dispatchEvent(new Event('change'));
+      }
+    });
+  });
+}
+
 function getTierIndex(avg) {
   if (avg <= TIER_LOW) return 0;
   if (avg <= TIER_HIGH) return 1;
@@ -271,6 +312,7 @@ function calculate() {
 }
 
 buildForm();
+setupGenderToggle();
 document.getElementById('calc-btn').addEventListener('click', calculate);
 </script><script>
 document.getElementById('calc-btn').addEventListener('click', function() {
