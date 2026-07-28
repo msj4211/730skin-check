@@ -51,7 +51,12 @@
     background: #fff; border: 1px solid #DDD5C7; border-radius: 8px; color: #6B6559;
     font-size: 13px; cursor: pointer; font-family: inherit; text-decoration: none;
   }
-  .print-btn { background: #2E2A26; color: #F7F3EC; border-color: #2E2A26; font-weight: 700; }
+  .print-btn {
+    background: #FFFFFF; color: #1F1F1F; border-color: #D9D1C7; font-weight: 700;
+    border-radius: 16px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  }
+  .print-btn:hover { background: #FAF8F5; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.09); transform: translateY(-1px); }
 
   .empty-state { text-align: center; color: #8A8378; font-size: 14px; margin-top: 60px; }
   .empty-state a { color: #B08D57; }

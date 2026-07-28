@@ -104,8 +104,11 @@
 
   .calc-btn {
     width: 100%; max-width: 100%; padding: 14px; margin-top: 10px; font-size: 15px; font-weight: 700;
-    background: #2E2A26; color: #F7F3EC; border: none; border-radius: 10px; cursor: pointer;
+    background: #FFFFFF; color: #1F1F1F; border: 1px solid #D9D1C7; border-radius: 16px; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
   }
+  .calc-btn:hover { background: #FAF8F5; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.09); transform: translateY(-1px); }
   .calc-btn:active { transform: scale(0.99); }
 
   footer { text-align: center; font-size: 11px; color: #B0A896; margin-top: 30px; }

@@ -61,10 +61,12 @@
   .chip input:checked + span{ background:var(--sage); border-color:var(--sage); color:#fff; font-weight:600; }
   .chip input:checked + span.type-span{ background:var(--terracotta); border-color:var(--terracotta); }
   .submit-btn{
-    width:100%; margin-top:6px; padding:15px; border:none; border-radius:12px;
-    background:#d67b20; color:#fff; font-size:15.5px; font-weight:700;
-    letter-spacing:0.02em; cursor:pointer; transition:opacity .15s ease;
+    width:100%; margin-top:6px; padding:15px; border:1px solid #D9D1C7; border-radius:16px;
+    background:#FFFFFF; color:#1F1F1F; font-size:15.5px; font-weight:700;
+    letter-spacing:0.02em; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.06);
+    transition:box-shadow .2s ease, transform .2s ease, background-color .2s ease;
   }
+  .submit-btn:hover:not(:disabled){background:#FAF8F5; box-shadow:0 8px 22px rgba(0,0,0,.09); transform:translateY(-1px);}
   .submit-btn:disabled{opacity:0.55;cursor:default;}
   .submit-btn:active:not(:disabled){opacity:0.85;}
   .error-msg{ display:none; font-size:12.5px; color:var(--terracotta); margin-top:-10px; margin-bottom:16px; }
