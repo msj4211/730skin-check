@@ -138,5 +138,25 @@ if (!raw) {
   contentEl.appendChild(actionRow);
 }
 </script>
+<script>
+// iframe으로 이 페이지를 감싸는 부모 문서에 실제 콘텐츠 높이를 알려준다.
+// postMessage는 origin이 달라도(cross-origin) 항상 동작해서, 로컬 개발
+// 서버처럼 부모와 origin이 다른 환경에서도 iframe 높이가 정확히 맞춰진다.
+(function () {
+  function reportHeight() {
+    window.parent.postMessage({
+      source: '730skin-check-embed',
+      height: document.documentElement.scrollHeight
+    }, '*');
+  }
+
+  if (window.ResizeObserver) {
+    new ResizeObserver(reportHeight).observe(document.body);
+  } else {
+    window.addEventListener('load', reportHeight);
+  }
+  reportHeight();
+})();
+</script>
 </body>
 </html>
