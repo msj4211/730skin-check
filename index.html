@@ -364,9 +364,14 @@ document.getElementById('calc-btn').addEventListener('click', function() {
 // 정확히 맞춰진다.
 (function () {
   function reportHeight() {
+    // documentElement.scrollHeight는 "콘텐츠 높이와 뷰포트 높이 중 큰 값"을
+    // 반환한다. 이전 페이지(체크리스트)에서 이미 iframe이 크게 늘어난 상태로
+    // 이 페이지로 넘어오면, 뷰포트 자체가 커서 실제 콘텐츠보다 큰 값을 그대로
+    // 돌려주는 문제가 있다. body.scrollHeight는 뷰포트 크기와 무관하게 실제
+    // 콘텐츠 높이만 반영하므로 이 문제가 없다.
     window.parent.postMessage({
       source: '730skin-check-embed',
-      height: document.documentElement.scrollHeight
+      height: document.body.scrollHeight
     }, '*');
   }
 
